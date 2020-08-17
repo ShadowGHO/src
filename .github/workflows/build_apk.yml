@@ -47,19 +47,22 @@ jobs:
           sudo rm -f /swapfile
 
 #      Uncomment if you need additional space (takes about 2 minutes)
-#      - name: Reclaiming disk space on / by removing .NET framework
-#        run: sudo rm -rf /usr/share/dotnet
+      - name: Reclaiming disk space on / by removing .NET framework
+        run: sudo rm -rf /usr/share/dotnet
+        
+      - name: Checking available disk-space
+        run: df -h
 
       - name: Checking-out source-code in $GITHUB_WORKSPACE
         uses: actions/checkout@v2
 
       - name: Creating secondary disk folder on /dev/disk/azure/resource-part1 (SSD)
         run: |
-          sudo mkdir -p /mnt/secondary_disk
-          sudo chown -R runner:docker /mnt/secondary_disk
+          sudo mkdir -p /secondary_disk
+          sudo chown -R runner:docker /secondary_disk
           
       - name: Creating symlink on /dev/disk/azure/root-part1 pointing to /dev/disk/azure/resource-part1
-        run: ln -s /mnt/secondary_disk $GITHUB_WORKSPACE/
+        run: ln -s /secondary_disk $GITHUB_WORKSPACE/
 
       # We cannot checkout outside of $GITHUB_WORKSPACE, but we want to checkout to the SSD
       # so we have a symbolic link $GITHUB_WORKSPACE/secondary_disk/ pointing to the SSD
@@ -149,11 +152,11 @@ jobs:
 
       - name: Creating cache folder on /dev/disk/azure/resource-part1 (SSD)
         run: |
-          sudo mkdir -p /mnt/cache
-          sudo chown -R runner:docker /mnt/cache
+          sudo mkdir -p /cache
+          sudo chown -R runner:docker /cache
           
       - name: Creating symlink in $HOME/cache pointing to cache on /dev/disk/azure/resource-part1
-        run: ln -s /mnt/cache $HOME/
+        run: ln -s /cache $HOME/
 
       - name: Downloading binary objects cache to $HOME/cache
         run: rclone copy --fast-list --transfers=16 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
@@ -198,102 +201,102 @@ jobs:
       - name: Compiling source-code (base)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} base
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome_java)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_java
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (components/version_info)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/browser)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/common)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/common
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/gpu)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/gpu
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/renderer)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/renderer
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (extensions)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} extensions
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (services)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} services
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (v8)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} v8
 
-      - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
-        run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         if: ${{ github.repository_owner == 'kiwibrowser' }}
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
+#         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Checking available disk-space
         run: df -h
