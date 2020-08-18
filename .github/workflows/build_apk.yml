@@ -144,8 +144,8 @@ jobs:
       - name: sortlink
         run: ln -s /mnt/cache $HOME/
 
-      - name: Downloading binary objects cache to $HOME/cache
-        run: rclone copy --fast-list --transfers=16 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
+#       - name: Downloading binary objects cache to $HOME/cache
+#         run: rclone copy --fast-list --transfers=16 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
 
       - name: Checking available disk-space after downloading cache
         run: df -h
