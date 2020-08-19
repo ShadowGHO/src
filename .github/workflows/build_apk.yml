@@ -130,11 +130,11 @@ jobs:
         run: |
           mkdir -p $HOME/.config/rclone/
           echo '[cache]' > $HOME/.config/rclone/rclone.conf
-          echo 'type = s3' >> $HOME/.config/rclone/rclone.conf
-          echo 'provider = Wasabi' >> $HOME/.config/rclone/rclone.conf
-          echo 'env_auth = false' >> $HOME/.config/rclone/rclone.conf
-          echo 'endpoint = s3.wasabisys.com' >> $HOME/.config/rclone/rclone.conf
-          echo 'acl = public-read' >> $HOME/.config/rclone/rclone.conf
+          echo 'client_id = ${{ secrets.CLIENT_ID }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'client_secret = ${{ secrets.CLIENT_SECRET }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'drive_id = ${{ secrets.DRIVE_ID }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'drive_type  = personal' >> $HOME/.config/rclone/rclone.conf
 
       - name: Creating cache folder on /dev/disk/azure/resource-part1 (SSD)
         run: |
@@ -173,114 +173,73 @@ jobs:
         run: df -h
 
       - name: Creating rclone config to upload the cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
         run: |
           echo '[sync]' > $HOME/.config/rclone/rclone.conf
-          echo 'type = s3' >> $HOME/.config/rclone/rclone.conf
-          echo 'provider = Wasabi' >> $HOME/.config/rclone/rclone.conf
-          echo 'env_auth = true' >> $HOME/.config/rclone/rclone.conf
-          echo 'endpoint = s3.wasabisys.com' >> $HOME/.config/rclone/rclone.conf
-          echo 'acl = public-read' >> $HOME/.config/rclone/rclone.conf
+          echo 'client_id = ${{ secrets.CLIENT_ID }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'client_secret = ${{ secrets.CLIENT_SECRET }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'drive_id = ${{ secrets.DRIVE_ID }}' >> $HOME/.config/rclone/rclone.conf
+          echo 'drive_type  = personal' >> $HOME/.config/rclone/rclone.conf
       # We compile component by component as 6 hours is not enough for the initial build
       # so we can snapshot between each component and continue further from the snapshot
       - name: Compiling source-code (base)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} base
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome_java)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_java
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (components/version_info)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/browser)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/common)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/common
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/gpu)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/gpu
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/renderer)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/renderer
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (extensions)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} extensions
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (services)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} services
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (v8)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} v8
 
       - name: Uploading binary objects to cache
-        if: ${{ github.repository_owner == 'kiwibrowser' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.WASABI_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.WASABI_SECRET_KEY }}
         run: rclone copy --fast-list --transfers=16 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Checking available disk-space
@@ -316,7 +275,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACESS_TOKEN }}
         with:
           tag_name: ${{ github.run_id }}
           release_name: Release ${{ github.run_id }}
@@ -332,7 +291,7 @@ jobs:
       - name: Uploading release asset (arm)
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACESS_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./apk-arm/ChromePublic.apk
@@ -347,7 +306,7 @@ jobs:
       - name: Uploading release asset (arm64)
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACESS_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./apk-arm64/ChromePublic.apk
@@ -362,7 +321,7 @@ jobs:
       - name: Uploading release asset (x86)
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACESS_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./apk-x86/ChromePublic.apk
@@ -377,7 +336,7 @@ jobs:
       - name: Uploading release asset (x64)
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACESS_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./apk-x64/ChromePublic.apk
