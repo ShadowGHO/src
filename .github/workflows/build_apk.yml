@@ -135,6 +135,9 @@ jobs:
           echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
           echo 'drive_id = ${{ secrets.DRIVE_ID }}' >> $HOME/.config/rclone/rclone.conf
           echo 'drive_type  = personal' >> $HOME/.config/rclone/rclone.conf
+          
+      - name: cat $HOME/.config/rclone/rclone.conf
+        run: cat $HOME/.config/rclone/rclone.conf
 
       - name: Creating cache folder on /dev/disk/azure/resource-part1 (SSD)
         run: |
