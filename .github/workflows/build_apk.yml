@@ -67,8 +67,8 @@ jobs:
           cp ../.cipd/.gclient ..
           cp ../.cipd/.gclient_entries ..
 
-      # - name: Installing rclone
-      #   run: curl https://rclone.org/install.sh | sudo bash -s beta
+      - name: Installing rclone
+        run: curl https://rclone.org/install.sh | sudo bash -s beta
 
       - name: Updating APT repository
         run: sudo apt-get update
@@ -147,8 +147,8 @@ jobs:
       - name: check rclone isAvallable
         run: rclone lsd cache
 
-#       - name: Downloading binary objects cache to $HOME/cache
-#         run: rclone copy --fast-list --transfers=16 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
+      - name: Downloading binary objects cache to $HOME/cache
+        run: rclone copy --fast-list --transfers=16 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
 
       - name: Checking available disk-space after downloading cache
         run: df -h
