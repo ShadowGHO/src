@@ -130,6 +130,7 @@ jobs:
         run: |
           mkdir -p $HOME/.config/rclone/
           echo '[remote]' > $HOME/.config/rclone/rclone.conf
+          echo 'type = onedrive' >> $HOME/.config/rclone/rclone.conf
           echo 'client_id = ${{ secrets.CLIENT_ID }}' >> $HOME/.config/rclone/rclone.conf
           echo 'client_secret = ${{ secrets.CLIENT_SECRET }}' >> $HOME/.config/rclone/rclone.conf
           echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
