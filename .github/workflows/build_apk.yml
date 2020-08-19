@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        platform: [arm, arm64, x86, x64]
+        platform: [arm64]
 
     # The GitHub Actions machines have a "slow disk", and a SSD "fast" disk.
     # However, there is not enough space to do all the processing on the SSD.
@@ -129,7 +129,7 @@ jobs:
       - name: Creating rclone config
         run: |
           mkdir -p $HOME/.config/rclone/
-          echo '[cache]' > $HOME/.config/rclone/rclone.conf
+          echo '[remote]' > $HOME/.config/rclone/rclone.conf
           echo 'client_id = ${{ secrets.CLIENT_ID }}' >> $HOME/.config/rclone/rclone.conf
           echo 'client_secret = ${{ secrets.CLIENT_SECRET }}' >> $HOME/.config/rclone/rclone.conf
           echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
@@ -147,11 +147,11 @@ jobs:
       - name: sortlink
         run: ln -s /mnt/cache $HOME/
       
-#       - name: check rclone isAvailable
-#         run: rclone lsd cache:
+      - name: check rclone isAvailable
+        run: rclone lsd remote:
 
-#       - name: Downloading binary objects cache to $HOME/cache
-#         run: rclone copy --fast-list --transfers=16 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
+      - name: Downloading binary objects cache to $HOME/cache
+        run: rclone copy --fast-list --transfers=16 remote:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
 
       - name: Checking available disk-space after downloading cache
         run: df -h
@@ -178,75 +178,75 @@ jobs:
       - name: Checking available disk-space before build cache
         run: df -h
 
-      - name: Creating rclone config to upload the cache
-        run: |
-          echo '[sync]' > $HOME/.config/rclone/rclone.conf
-          echo 'client_id = ${{ secrets.CLIENT_ID }}' >> $HOME/.config/rclone/rclone.conf
-          echo 'client_secret = ${{ secrets.CLIENT_SECRET }}' >> $HOME/.config/rclone/rclone.conf
-          echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
-          echo 'drive_id = ${{ secrets.DRIVE_ID }}' >> $HOME/.config/rclone/rclone.conf
-          echo 'drive_type  = personal' >> $HOME/.config/rclone/rclone.conf
+#       - name: Creating rclone config to upload the cache
+#         run: |
+#           echo '[sync]' > $HOME/.config/rclone/rclone.conf
+#           echo 'client_id = ${{ secrets.CLIENT_ID }}' >> $HOME/.config/rclone/rclone.conf
+#           echo 'client_secret = ${{ secrets.CLIENT_SECRET }}' >> $HOME/.config/rclone/rclone.conf
+#           echo 'token = ${{ secrets.TOKEN }}' >> $HOME/.config/rclone/rclone.conf
+#           echo 'drive_id = ${{ secrets.DRIVE_ID }}' >> $HOME/.config/rclone/rclone.conf
+#           echo 'drive_type  = personal' >> $HOME/.config/rclone/rclone.conf
       # We compile component by component as 6 hours is not enough for the initial build
       # so we can snapshot between each component and continue further from the snapshot
       - name: Compiling source-code (base)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} base
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome_java)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_java
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (components/version_info)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/browser)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/common)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/common
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/gpu)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/gpu
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/renderer)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/renderer
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (extensions)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} extensions
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (services)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} services
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (v8)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} v8
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Checking available disk-space
         run: df -h
