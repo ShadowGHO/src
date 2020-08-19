@@ -209,8 +209,8 @@ jobs:
 #       - name: Uploading binary objects to cache
 #         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
-      - name: Compiling source-code (chrome/browser)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
+#       - name: Compiling source-code (chrome/browser)
+#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
 
       - name: Uploading binary objects to cache
         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
@@ -266,14 +266,14 @@ jobs:
       - name: Listing running processes
         run: ps auxww
 
-      - name: Compiling source-code (final stage)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_public_apk
+#       - name: Compiling source-code (final stage)
+#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_public_apk
 
-      - name: Uploading APK
-        uses: actions/upload-artifact@v1
-        with:
-          name: apk-${{ matrix.platform }}
-          path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
+#       - name: Uploading APK
+#         uses: actions/upload-artifact@v1
+#         with:
+#           name: apk-${{ matrix.platform }}
+#           path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
 
   sign_and_upload:
     runs-on: ubuntu-latest
