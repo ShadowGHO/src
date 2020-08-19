@@ -189,23 +189,25 @@ jobs:
 #           echo 'drive_type  = personal' >> $HOME/.config/rclone/rclone.conf
       # We compile component by component as 6 hours is not enough for the initial build
       # so we can snapshot between each component and continue further from the snapshot
-      - name: Compiling source-code (base)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} base
+        
+          
+#       - name: Compiling source-code (base)
+#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} base
 
-      - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
-      - name: Compiling source-code (chrome_java)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_java
+#       - name: Compiling source-code (chrome_java)
+#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_java
 
-      - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
-      - name: Compiling source-code (components/version_info)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
+#       - name: Compiling source-code (components/version_info)
+#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
 
-      - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+#       - name: Uploading binary objects to cache
+#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/browser)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
