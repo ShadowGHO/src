@@ -47,10 +47,10 @@ jobs:
 
       - name: Creating secondary disk folder on /dev/disk/azure/resource-part1 (SSD)
         run: |
-          sudo mkdir -p /secondary_disk
-          sudo chown -R runner:docker /secondary_disk 
+          sudo mkdir -p /mnt/secondary_disk
+          sudo chown -R runner:docker /mnt/secondary_disk 
       - name: sortlink 
-        run: ln -s /secondary_disk $GITHUB_WORKSPACE/
+        run: ln -s /mnt/secondary_disk $GITHUB_WORKSPACE/
 
       # We cannot checkout outside of $GITHUB_WORKSPACE, but we want to checkout to the SSD
       # so we have a symbolic link $GITHUB_WORKSPACE/secondary_disk/ pointing to the SSD
@@ -209,8 +209,8 @@ jobs:
 #       - name: Uploading binary objects to cache
 #         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
-#       - name: Compiling source-code (chrome/browser)
-#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
+      - name: Compiling source-code (chrome/browser)
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
 
       - name: Uploading binary objects to cache
         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
