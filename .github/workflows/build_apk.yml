@@ -148,11 +148,11 @@ jobs:
       - name: sortlink
         run: ln -s /mnt/cache $HOME/
       
-      - name: check rclone isAvailable
-        run: rclone ls remote:kiwibrowser-ccache-arm64
+#       - name: check rclone isAvailable
+#         run: rclone ls remote:kiwibrowser-ccache-arm64
 
-      - name: Downloading binary objects cache to $HOME/cache
-        run: rclone copy --fast-list --transfers=16 remote:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
+#       - name: Downloading binary objects cache to $HOME/cache
+#         run: rclone copy --fast-list --transfers=16 remote:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
 
       - name: Checking available disk-space after downloading cache
         run: df -h
@@ -209,11 +209,11 @@ jobs:
 #       - name: Uploading binary objects to cache
 #         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
-#       - name: Compiling source-code (chrome/browser)
-#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
+      - name: Compiling source-code (chrome/browser)
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
 
-#       - name: Uploading binary objects to cache
-#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+      - name: Uploading binary objects to cache
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/common)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/common
