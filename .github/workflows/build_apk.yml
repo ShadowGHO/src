@@ -210,7 +210,7 @@ jobs:
 #         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/browser)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 chrome/browser
 
       - name: Uploading binary objects to cache
         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
