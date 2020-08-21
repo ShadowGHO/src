@@ -152,7 +152,7 @@ jobs:
 #         run: rclone ls remote:kiwibrowser-ccache-arm64
 
       - name: Downloading binary objects cache to $HOME/cache
-        run: rclone copy --fast-list --transfers=16 remote:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
+        run: rclone copy --fast-list --transfers=16 remote:kiwibrowser-${{ matrix.platform }} $HOME/cache
 
       - name: Checking available disk-space after downloading cache
         run: df -h
@@ -191,65 +191,65 @@ jobs:
       # so we can snapshot between each component and continue further from the snapshot
         
           
-#       - name: Compiling source-code (base)
-#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} base
+      - name: Compiling source-code (base)
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 base
 
-#       - name: Uploading binary objects to cache
-#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+      - name: Uploading binary objects to cache
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
-#       - name: Compiling source-code (chrome_java)
-#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_java
+      - name: Compiling source-code (chrome_java)
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 chrome_java
 
-#       - name: Uploading binary objects to cache
-#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+      - name: Uploading binary objects to cache
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
-#       - name: Compiling source-code (components/version_info)
-#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
+      - name: Compiling source-code (components/version_info)
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 components/version_info
 
-#       - name: Uploading binary objects to cache
-#         run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+      - name: Uploading binary objects to cache
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/browser)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 chrome/browser
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/common)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/common
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 chrome/common
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/gpu)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/gpu
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 chrome/gpu
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (chrome/renderer)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/renderer
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 chrome/renderer
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (extensions)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} extensions
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 extensions
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (services)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} services
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 services
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Compiling source-code (v8)
-        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} v8
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} -j 20 v8
 
       - name: Uploading binary objects to cache
-        run: rclone copy $HOME/cache/ remote:kiwibrowser-ccache-${{ matrix.platform }}/
+        run: rclone copy $HOME/cache/ remote:kiwibrowser-${{ matrix.platform }}/
 
       - name: Checking available disk-space
         run: df -h
@@ -266,14 +266,14 @@ jobs:
       - name: Listing running processes
         run: ps auxww
 
-#       - name: Compiling source-code (final stage)
-#         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_public_apk
+      - name: Compiling source-code (final stage)
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_public_apk
 
-#       - name: Uploading APK
-#         uses: actions/upload-artifact@v1
-#         with:
-#           name: apk-${{ matrix.platform }}
-#           path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
+      - name: Uploading APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-${{ matrix.platform }}
+          path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
 
   sign_and_upload:
     runs-on: ubuntu-latest
